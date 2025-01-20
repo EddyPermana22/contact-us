@@ -24,10 +24,23 @@ services:
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
       - PORT=${BACKEND_PORT}
-    ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    expose:
+      - ${BACKEND_PORT}
     depends_on:
       - db
+    restart: unless-stopped
+
+  nginx:
+    build:
+      context: ../nginx
+      dockerfile: Dockerfile
+    container_name: ${PROJECT_NAME}_nginx
+    environment:
+      - BACKEND_PORT=${BACKEND_PORT}
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:

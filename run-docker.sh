@@ -47,9 +47,9 @@ npm run prisma:migrate
 # Return to the project root
 cd ..
 
-# Start the backend container
-echo "Starting backend container..."
-docker-compose -f docker/docker-compose.yml up -d --build backend
+# Start the containers
+echo "Starting all containers..."
+docker-compose -f docker/docker-compose.yml up -d --build
 
 echo "Docker containers started successfully."
-echo "Backend is now running with the pre-built version."
+echo "Backend is now running behind Nginx. API is accessible at http://localhost/api"

@@ -1,0 +1,32 @@
+events {
+    worker_connections 1024;
+}
+
+http {
+    # Definisikan format log yang menyertakan X-Forwarded-For
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+
+    server {
+        listen 80;
+        server_name localhost;
+
+        # Gunakan format log yang baru didefinisikan
+        access_log /var/log/nginx/access.log main;
+
+        location /api/ {
+            proxy_pass http://backend:${BACKEND_PORT}/;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+
+            # Tambahkan header-header berikut
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+}
