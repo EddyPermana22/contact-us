@@ -31,10 +31,11 @@ services:
     restart: unless-stopped
 
   nginx:
-    build:
-      context: ../nginx
-      dockerfile: Dockerfile
+    image: nginx:alpine
     container_name: ${PROJECT_NAME}_nginx
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/html:/usr/share/nginx/html
     environment:
       - BACKEND_PORT=${BACKEND_PORT}
     ports:
